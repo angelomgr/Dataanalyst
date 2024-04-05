@@ -746,3 +746,190 @@ END
 
 --SELECT * FROM TBL_TURMAS
 --SELECT * FROM LOGS
+
+GO
+
+-------AULA 19 SUBLINGUAGEM DCL - ENTREGÁVEL: IMPLEMENTAÇÃO DE SENTENÇAS:-------------------- ABAIXO EM VERDE, TODOS OS COMANDOS DE TESTES A SEREM REALIZADOS PELOS USUÁRIOS CRIADOA (VLAD E TESTE)
+
+
+--PRIMEIRO USUÁRIO (VLAD)---------------------------------------------------------------------------
+
+-- Executar como admin do DB \/ ----------------------------------------------------------------------
+
+USE [master]
+GO
+CREATE LOGIN [vlad] WITH PASSWORD=N'1234' MUST_CHANGE, DEFAULT_DATABASE=[master], DEFAULT_LANGUAGE=[Português (Brasil)], CHECK_EXPIRATION=ON, CHECK_POLICY=ON
+GO
+USE [Faculdade]
+GO
+CREATE USER [vlad] FOR LOGIN [vlad]
+GO
+USE [Faculdade]
+GO
+ALTER ROLE [db_datareader] ADD MEMBER [vlad]
+GO
+
+--exec sp_table_privileges TBL_ALUNOS
+
+
+
+-- INSERINDO ALUNO PARA TESTAR PERMISSÕES:
+
+insert into TBL_ALUNOS values
+
+('Teste', '(11)9999-9999', 'teste@teste.com', 'Rua teste', 1, 1, 'Manhã', 'Ativo', 'teste', 'senhateste'),
+('Teste', '(11)9999-9999', 'teste2@teste.com', 'Rua teste', 1, 1, 'Manhã', 'Ativo', 'teste', 'senhateste'),
+('Teste', '(11)9999-9999', 'teste3@teste.com', 'Rua teste', 1, 1, 'Manhã', 'Ativo', 'teste', 'senhateste');
+
+
+
+
+-- TESTANDO UPDATE, DELETE E INSERT. Executar com vlad: Login: vlad senha: 1234-----------------------------------------------------
+
+--SELECT * FROM TBL_Alunos -- permitido	
+
+--update TBL_ALUNOS set senha = 1234 where id_matricula = 54 --Negado
+
+--delete TBL_ALUNOS where id_matricula = 54 --Negado
+
+--insert into TBL_ALUNOS values('Teste', '(11)9999-9999', 'teste1@teste.com', 'Rua teste', 1, 1, 'Manhã', 'Ativo', 'teste', 'senhateste') --Negado
+
+
+
+
+-- ALTERANDO PERMISSÕES. Executar como admin do DB \/ ----------------------------------------------------------------------------------
+
+--- Permitindo UPDATE, DELETE E INSERT
+
+GRANT UPDATE, DELETE, INSERT ON TBL_Alunos TO vlad
+
+
+
+
+-- TESTES DE PERMISSÕES. Executar com vlad: Login: vlad senha: 1234------------------------------------------------------------
+
+
+--SELECT * FROM TBL_ALUNOS --PERMITIDO
+
+--UPDATE TBL_ALUNOS SET senha = 1234 WHERE id_matricula = 54 --SELECT * from TBL_ALUNOS --PERMITIDO
+
+--DELETE TBL_ALUNOS where id_matricula > 53 ----PERMITIDO
+
+--INSERT into TBL_ALUNOS values('Teste', '(11)9999-9999', 'teste@teste.com', 'Rua teste', 1, 1, 'Manhã', 'Ativo', 'teste', 'senhateste') ----PERMITIDO
+
+
+
+-- REVOGANDO DELETE E INSERT. Executar como admin do DB \/ --------------------------------------------------------------------
+
+
+REVOKE INSERT, DELETE ON TBL_Alunos FROM vlad
+
+
+-- TESTES DE PERMISSÕES. Executar com vlad: Login: vlad senha: 1234------------------------------------------------------------------
+
+--select * from TBL_ALUNOS --PERMITIDO
+
+--update TBL_ALUNOS set senha = 1234 where id_matricula = 1 -- PERMITIDO
+
+--delete TBL_ALUNOS where id_matricula = 55 -- NEGADO
+
+--insert into TBL_ALUNOS values ('Teste', '(11)9999-9999', 'teste5@teste.com', 'Rua teste', 1, 1, 'Manhã', 'Ativo', 'teste', 'senhateste') -- NEGADO
+
+
+
+
+
+
+
+--SEGUNDO USUÁRIO (TESTE)---------------------------------------------------------------------------
+
+-- Executar como admin do DB \/ -------------------------------------------------------------------------
+
+USE [master]
+GO
+CREATE LOGIN [TESTE] WITH PASSWORD=N'1234' MUST_CHANGE, DEFAULT_DATABASE=[master], CHECK_EXPIRATION=ON, CHECK_POLICY=ON
+GO
+USE [Faculdade]
+GO
+CREATE USER [TESTE] FOR LOGIN [TESTE]
+
+
+
+GO
+
+-- TESTES DE PERMISSÕES. Executar com TESTE: Login: TESTE senha: 1234----------------------------------------------------
+
+--SELECT * FROM TBL_ALUNOS WHERE id_matricula = 56 -- OK
+
+--insert into TBL_ALUNOS values ('Teste', '(11)9999-9999', 'teste6@teste.com', 'Rua teste', 1, 1, 'Manhã', 'Ativo', 'teste', 'senhateste') --NEGADO
+
+--UPDATE TBL_ALUNOS SET senha = 1234 WHERE id_matricula = 56 -- NEGADO
+
+----DELETE TBL_ALUNOS WHERE id_matricula = 56 --NEGADO
+
+
+
+
+-- Executar como admin do DB \/ -------------------------------------------------------------------------
+
+GRANT SELECT(nome, login) ON TBL_Alunos TO TESTE
+
+
+
+
+-- TESTES DE PERMISSÕES. Executar com TESTE: Login: TESTE senha: 1234----------------------------------------------------
+
+--SELECT * FROM TBL_ALUNOS -- NEGADO
+
+--SELECT NOME, LOGIN FROM Tbl_Alunos --PERMITIDO
+
+
+-- Aula 20 TCL-----------------------------------------------------------------------------------------------------------------------------------------
+
+--Aspectos a serem incluídos na entrega:
+--Na primeira tabela deverá eliminar alguns registros, iniciando previamente uma transação.
+--Deixe em uma próxima linha a sentença Rollback e em uma linha posterior a sentença Commit.
+--Execute os SELECTs antes e depois para evidenciar que o comando utilizado foi feito com sucesso.
+
+-- INSERINDO PARA EXCLUIR
+INSERT INTO TBL_APROVACAO VALUES(1, 1, 'Bacharelado', 1, 1, 1.0, 10.0, 'Aprovado');
+
+-- DELETANDO
+BEGIN TRANSACTION
+
+DELETE TBL_APROVACAO
+WHERE id_aprovacao = 55 
+
+ROLLBACK
+
+--COMMIT
+
+--SELECT * FROM TBL_APROVACAO (NOLOCK)
+
+--Na segunda tabela, insira oito novos registros, iniciando também uma transação. 
+--Adicione um save transaction após a inserção do registro #4 e outro savepoint após o registro #8.
+--Adicione em uma linha comentada a sentença de ROLLBACK do save transaction dos primeiros 4 registros inseridos.
+
+-- INSERINDO
+BEGIN TRANSACTION
+
+INSERT INTO TBL_CURSOS VALUES(2, 'Pós-graduação', 'Noite', '160:00:00', 500, 'Data Science', 5000.00) --1
+INSERT INTO TBL_CURSOS VALUES(3, 'Graduação', 'Manhã', '180:00:00', 550, 'Engenharia de Software', 6000.00); --2
+INSERT INTO TBL_CURSOS VALUES(1, 'Pós-graduação', 'Noite', '140:00:00', 480, 'Ciência de Dados Avançada', 5200.00); --3
+INSERT INTO TBL_CURSOS VALUES(1, 'Graduação', 'Tarde', '160:00:00', 520, 'Engenharia Biomédica', 5800.00); --4
+
+SAVE TRANSACTION CHECKPOINT1
+
+INSERT INTO TBL_CURSOS VALUES(2, 'Mestrado', 'Noite', '150:00:00', 490, 'Inteligência Artificial Aplicada', 5400.00); --5
+INSERT INTO TBL_CURSOS VALUES(2, 'Pós-graduação', 'Manhã', '170:00:00', 530, 'Big Data Analytics', 5600.00); --6
+INSERT INTO TBL_CURSOS VALUES(3, 'Graduação', 'Noite', '150:00:00', 500, 'Engenharia de Telecomunicações', 5700.00); --7
+INSERT INTO TBL_CURSOS VALUES(1, 'Pós-graduação', 'Tarde', '160:00:00', 510, 'Machine Learning Avançado', 5300.00); --8
+
+SAVE TRANSACTION CHECKPOINT2
+
+--SELECT * FROM TBL_CURSOS (NOLOCK)-- RESULTADO: 11 LINHAS
+
+ROLLBACK TRANSACTION CHECKPOINT1 -- ROLLBACK ATÉ O PRIMEIRO CHECKPOINT
+
+--SELECT * FROM TBL_CURSOS (NOLOCK)-- RESULTADO: 7 LINHAS
+
