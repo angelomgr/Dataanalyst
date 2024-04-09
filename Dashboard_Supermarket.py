@@ -23,6 +23,8 @@ logo = st.sidebar.image('OIP.jpeg', width= 150)
 title = st.title('Dashboard')
 month = st.sidebar.selectbox("Mês", df["Month"].unique())
 
+botao = st.sidebar._link_button(label='GitHub', url='https://github.com/angelomgr/Dataanalyst', help='', use_container_width=True, )
+
 
 #Tabela filtrada pela caixa de seleção
 df_filtered = df[df["Month"] == month]
