@@ -1,0 +1,152 @@
+⚪ CONEXÃO COM Tabela1 DE ARQUIVO XLS
+
+= Table.TransformColumnTypes(Tabela1_Table,{{"Protocolo", Int64.Type}, {"Data de criação", type date}, {"Canal Atendimento ", type text}, {"Cidade", type text}, {"UF", type text}, {"Marca", type text}, {"Produto", type text}, {"Embalagem", type text}, {"Lote", Int64.Type}, {"Fabricação", type date}, {"Validade", type date}, {"Quantidade reclamada", Int64.Type}, {"Manifestação", type text}, {"Categoria", type text}, {"Natureza", type text}, {"Ocorrência", type text}, {"Voz do SAC", type text}, {"Setor", type text}, {"Finalidade de amostra", type text}, {"Causa", type any}, {"Procedência", type text}, {"RNC", type text}, {"Gerou troca/dev./bonif.", type text}, {"Autorizado por", type any}, {"Produto ressarcido", type any}, {"Qtd ressarcida", type any}, {"Ação corretiva", type any}, {"Satisfação", type text}, {"Tratativa p/ insatisfação", type any}, {"Retorno do SAC", type date}, {"Status", type text}, {"Fabrica", type text}})
+
+-------------------------------------------------------------------------------------------------------
+
+⚪ CRIANDO TABELA CALENDÁRIO:
+
+Calendario = CALENDAR(MIN(Tabela1[Data de criação]);MAX(Tabela1[Data de criação]))
+
+--------------
+
+mes = MONTH(Calendario[Date]) * 1
+
+--------------
+
+Mês = FORMAT(Calendario[Date] * 1; "mmm")
+
+--------------
+
+Referencia = 
+
+VAR atual = FORMAT(MAX(Calendario[Date]);"yymm") * 1
+VAR anterior = atual - 1
+VAR datacontexto = FORMAT(Calendario[Date]; "yymm") * 1
+VAR antes = FORMAT(EOMONTH(MAX(Calendario[Date]); -1);"yymm") * 1
+
+
+RETURN if(datacontexto = atual; "Atual"; if(datacontexto = anterior; "Anterior"; if(datacontexto = antes; "Anterior"; "")))
+
+--------------
+
+mesano = FORMAT(Calendario[Date];"yymm") * 1
+
+--------------
+
+ano = YEAR(Calendario[Date])
+
+-------------------------------------------------------------------------------------------------------------------
+
+
+⚪ CRIAÇÃO DE PARÂMETROS:
+
+PARÂMETRO 1:
+
+Categoria / Produto = {
+    ("Marcas"; NAMEOF('Tabela1'[Marca]); 0);
+    ("Categorias"; NAMEOF('Tabela1'[Categoria]); 1);
+    ("Produtos"; NAMEOF('Tabela1'[Produto]); 2);
+    ("Naturezas"; NAMEOF('Tabela1'[Natureza]); 3)
+    
+}
+
+-----------------
+
+PARÂMETRO 2:
+
+Qtd / Protocolos = {
+    ("Protocolos"; NAMEOF('Tabela1'[Cont Atual]); 0);
+    ("QTD"; NAMEOF('Tabela1'[QTD Atual]); 1)
+}
+
+--------------
+
+PARÂMETRO 3:
+
+Var QTD / Protocolos = {
+    ("Protocolos"; NAMEOF('Tabela1'[#Variação Atual]); 0);
+    ("QTD"; NAMEOF('Tabela1'[#Variação atual QTD]); 1)
+    
+}
+
+--------------
+
+PARÂMETRO 4:
+
+Var QTD / Protocolos = {
+    ("Protocolos"; NAMEOF('Tabela1'[#Variação Atual]); 0);
+    ("QTD"; NAMEOF('Tabela1'[#Variação atual QTD]); 1)
+    
+}
+
+-------------------------------------------------------------------------------------------
+
+⚪ CONFIGURANDO TABELA CALENDÁRIO COMO TABELA DE DATA
+
+ARQUIVO > OPÇÕES E CONFIGURAÇÕES > OPÇÕES > Inteligência de dados Temporais: Desativado
+
+-- Power Bi para de detectar datas automáticamente e aplicar padrões temporais automáticamente.
+
+Dados > Calendario > ... > Marcar como tabela de data
+
+---------------------------------------------------------------------------------------------
+
+⚪ CRIANDO RELACIONOAMENTO ENTRE TABELAS
+
+Exibição do modelo > Gerenciar Relações > Novo... Calendario Date 🤝 Tabela1 (Data de criação)
+
+
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
+--------------
