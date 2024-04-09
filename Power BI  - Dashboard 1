@@ -1,84 +1,28 @@
-⚪ CONEXÃO COM Tabela1 DE ARQUIVO XLS
+⚪ CONEXÃO COM Base DE ARQUIVO XLS
 
-= Table.TransformColumnTypes(Tabela1_Table,{{"Protocolo", Int64.Type}, {"Data de criação", type date}, {"Canal Atendimento ", type text}, {"Cidade", type text}, {"UF", type text}, {"Marca", type text}, {"Produto", type text}, {"Embalagem", type text}, {"Lote", Int64.Type}, {"Fabricação", type date}, {"Validade", type date}, {"Quantidade reclamada", Int64.Type}, {"Manifestação", type text}, {"Categoria", type text}, {"Natureza", type text}, {"Ocorrência", type text}, {"Voz do SAC", type text}, {"Setor", type text}, {"Finalidade de amostra", type text}, {"Causa", type any}, {"Procedência", type text}, {"RNC", type text}, {"Gerou troca/dev./bonif.", type text}, {"Autorizado por", type any}, {"Produto ressarcido", type any}, {"Qtd ressarcida", type any}, {"Ação corretiva", type any}, {"Satisfação", type text}, {"Tratativa p/ insatisfação", type any}, {"Retorno do SAC", type date}, {"Status", type text}, {"Fabrica", type text}})
+= Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"ID", Int64.Type}, {"PROTOCOLO", Int64.Type}, {"DATA DO ATENDIMENTO", type date}, {"TIPO CLIENTE", type text}, {"CANAL", type text}, {"NOME", type any}, {"CPF", type any}, {"TELEFONE 1", type any}, {"TELEFONE 2", type any}, {"E-mail", type any}, {"LOGRADOURO", type any}, {"COMPLEMENTO", type any}, {"BAIRRO", type any}, {"CIDADE", type text}, {"UF", type text}, {"CEP", type any}, {"REFERENCIA", type any}, {"SKU", type text}, {"EAN", type text}, {"PRODUTO", type text}, {"MARCA", type text}, {"FAMILIA", type text}, {"CATEGORIA", type text}, {"DESCRIÇÃO", type text}, {"GRUPO", type text}, {"VALIDADE1", type text}, {"MANIFESTAÇÃO", type text}, {"TIPO", type text}, {"MOTIVO", type text}, {"NATUREZA", type text}, {"LOTE", type text}, {"FABRICAÇÃO", type text}, {"VALIDADE", type text}, {"QTDE RECLAMADA", Int64.Type}, {"QTDE RECOLHIDA", type any}, {"QTDE RESSARCIDA", type any}, {"DATA DA COMPRA", type text}, {"LOCAL COMPRA", type text}, {"Bairro / UF", type text}, {"Descrição -  Narrativa do Consumidor", type text}, {"AÇÃO DO SAC", type text}, {"ANALISE", type text}, {"Criticidade / Gravidade", type text}, {"Estado de ânimo", type text}, {"FOTOS", type text}, {"Finalidade amostra", type text}, {"TRANSPORTADORA", type text}, {"STATUS", type text}, {"SOLUÇÃO", type text}, {"LGPD", type text}})
 
--------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+⚪ CRIANDO TABELA TBL_CALENDARIO
 
-⚪ CRIANDO TABELA CALENDÁRIO:
+TBL_Calendario = CALENDAR(MIN(Base[DATA DO ATENDIMENTO]); MAX(Base[DATA DO ATENDIMENTO]))
 
-Calendario = CALENDAR(MIN(Tabela1[Data de criação]);MAX(Tabela1[Data de criação]))
+COLUNAS:
 
---------------
+Mm = MONTH(TBL_Calendario[Date])
 
-mes = MONTH(Calendario[Date]) * 1
+Mmm = EOMONTH(TBL_Calendario[Date];0)
 
---------------
+Ano = YEAR(TBL_Calendario[Date])
 
-Mês = FORMAT(Calendario[Date] * 1; "mmm")
+AnoMes = YEAR(TBL_Calendario[Date])&FORMAT(MONTH(TBL_Calendario[Date]);"00")
 
---------------
+FY = 
+var maior = TOPN(1;ALLSELECTED(TBL_Calendario[AnoMes]))
+var mes = LOOKUPVALUE(TBL_Calendario[Mm];TBL_Calendario[AnoMes];maior)
+RETURN IF(TBL_Calendario[Ano] = MAX(TBL_Calendario[Ano]); "YTD")
 
-Referencia = 
-
-VAR atual = FORMAT(MAX(Calendario[Date]);"yymm") * 1
-VAR anterior = atual - 1
-VAR datacontexto = FORMAT(Calendario[Date]; "yymm") * 1
-VAR antes = FORMAT(EOMONTH(MAX(Calendario[Date]); -1);"yymm") * 1
-
-
-RETURN if(datacontexto = atual; "Atual"; if(datacontexto = anterior; "Anterior"; if(datacontexto = antes; "Anterior"; "")))
-
---------------
-
-mesano = FORMAT(Calendario[Date];"yymm") * 1
-
---------------
-
-ano = YEAR(Calendario[Date])
-
--------------------------------------------------------------------------------------------------------------------
-
-
-⚪ CRIAÇÃO DE PARÂMETROS:
-
-PARÂMETRO 1:
-
-Categoria / Produto = {
-    ("Marcas"; NAMEOF('Tabela1'[Marca]); 0);
-    ("Categorias"; NAMEOF('Tabela1'[Categoria]); 1);
-    ("Produtos"; NAMEOF('Tabela1'[Produto]); 2);
-    ("Naturezas"; NAMEOF('Tabela1'[Natureza]); 3)
-    
-}
-
------------------
-
-PARÂMETRO 2:
-
-Qtd / Protocolos = {
-    ("Protocolos"; NAMEOF('Tabela1'[Cont Atual]); 0);
-    ("QTD"; NAMEOF('Tabela1'[QTD Atual]); 1)
-}
-
---------------
-
-PARÂMETRO 3:
-
-Var QTD / Protocolos = {
-    ("Protocolos"; NAMEOF('Tabela1'[#Variação Atual]); 0);
-    ("QTD"; NAMEOF('Tabela1'[#Variação atual QTD]); 1)
-    
-}
-
---------------
-
-PARÂMETRO 4:
-
-Var QTD / Protocolos = {
-    ("Protocolos"; NAMEOF('Tabela1'[#Variação Atual]); 0);
-    ("QTD"; NAMEOF('Tabela1'[#Variação atual QTD]); 1)
-    
-}
+Referência = if(TBL_Calendario[AnoMes] = MAX(TBL_Calendario[AnoMes]); "Mes atual")
 
 -------------------------------------------------------------------------------------------
 
@@ -94,59 +38,164 @@ Dados > Calendario > ... > Marcar como tabela de data
 
 ⚪ CRIANDO RELACIONOAMENTO ENTRE TABELAS
 
-Exibição do modelo > Gerenciar Relações > Novo... Calendario Date 🤝 Tabela1 (Data de criação)
+Exibição do modelo > Gerenciar Relações > Novo... TBL_Calendario Date 🤝 BASE (Data do atendimento)
 
+CARDINALIDADE: Muitos para um (*:1)
 
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
---------------
+DIREÇÃO DO FILTRO CRUZADI: Único
+
+---------------------------------------------------------------------------------------------
+
+⚪ CRIANDO MEDIDAS
+
+Contanterior = CALCULATE(COUNT(Base[PROTOCOLO]); TBL_Calendario[AnoMes] = FORMAT(EOMONTH(MAX(TBL_Calendario[Date]); -1);"yyyymm"))
+
+----------------------
+
+Contmes = --CALCULATE(
+                    --COUNTROWS('DB');
+                                    --TBL_Calendario[Referência] = "Mes atual")
+
+VAR ANOMES = MAX(TBL_Calendario[AnoMes])
+
+ RETURN CALCULATE(
+                    COUNTROWS('Base');
+                                    TBL_Calendario[AnoMes] = ANOMES)
+
+----------------------
+
+LYTD Cont = var primdia = EOMONTH(MAX(TBL_Calendario[Date]);-2)
+var ultimodia = EOMONTH(MAX(TBL_Calendario[Date]);-1)
+RETURN CALCULATE(COUNTROWS(Base); SAMEPERIODLASTYEAR(TBL_Calendario[Date])) --CALCULATE(COUNTROWS('DB'); TBL_Calendario[Date] > primdia && TBL_Calendario[Date] < ultimodia)
+
+----------------------
+
+LYTD QTD = var primdia = EOMONTH(MAX(TBL_Calendario[Date]);-2)
+var ultimodia = EOMONTH(MAX(TBL_Calendario[Date]);-1)
+RETURN CALCULATE(SUM(Base[QTDE RECLAMADA]); SAMEPERIODLASTYEAR(TBL_Calendario[Date])) --CALCULATE(COUNTROWS('DB'); TBL_Calendario[Date] > primdia && TBL_Calendario[Date] < ultimodia)
+
+----------------------
+
+QTDanterior = CALCULATE(SUM(Base[QTDE RECLAMADA]); TBL_Calendario[AnoMes] = FORMAT(EOMONTH(MAX(TBL_Calendario[Date]); -1);"yyyymm"))
+
+----------------------
+
+QTDmes = --CALCULATE(
+                    --COUNTROWS('DB');
+                                    --TBL_Calendario[Referência] = "Mes atual")
+
+VAR ANOMES = MAX(TBL_Calendario[AnoMes])
+
+ RETURN CALCULATE(
+                    SUM(Base[QTDE RECLAMADA]);
+                                    TBL_Calendario[AnoMes] = ANOMES)
+---------------------
+
+Título = IF(SELECTEDVALUE('Seleção'[Opção]) = "YTD";
+            "DASHBOARD YTD - " & UPPER(FORMAT(MIN(TBL_Calendario[Date]);"mmm")) & " a " & UPPER(FORMAT(MAX(TBL_Calendario[Date]);"mmm yy"));            
+            "DASHBOARD - " & UPPER(FORMAT(MAX(TBL_Calendario[Date]);"MMMM YY")))
+
+---------------------
+
+Titulo card 1 = IF(SELECTEDVALUE('Seleção'[Opção]) = "YTD";
+                    "Protocolos YTD ";
+                       "Protocolos " & FORMAT(MAX(TBL_Calendario[Date]);"mmm yy"))
+
+--------------------
+
+Titulo card 2 = "Variação"
+
+--------------------
+
+Titulo card 3 = IF(SELECTEDVALUE('Seleção'[Opção]) = "YTD";
+                    "QTD YTD ";
+                       "QTD " & FORMAT(MAX(TBL_Calendario[Date]);"mmm yy"))
+
+-------------------
+
+Variação cont mes = DIVIDE([Contmes]-[Contanterior]; [Contanterior])
+
+-------------------
+
+Variação cont YTD = DIVIDE([YTD cont]-[LYTD Cont]; [LYTD Cont])
+
+------------------
+
+Variação QTD mes = DIVIDE([QTDmes]-[QTDanterior]; [QTDanterior])
+
+------------------
+
+Variação QTD YTD = DIVIDE([YTD QTD]-[LYTD QTD]; [LYTD QTD])
+
+------------------
+
+YTD cont = CALCULATE(
+                COUNTROWS(Base);
+                                TBL_Calendario[FY] = "YTD")
+
+------------------
+
+YTD QTD = CALCULATE(
+                SUM(Base[QTDE RECLAMADA]);
+                                TBL_Calendario[FY] = "YTD")
+
+---------------------------------------------------------------------------------------------
+
+⚪ ORGANIZANDO MEDIDAS
+
+EXIBIÇÃO DO MODELO > MEDIDA > PROPRIEDADES > Pasta de exibição: Medidas DAX
+
+---------------------------------------------------------------------------------------------
+
+⚪ CRIAÇÃO DE PARÂMETROS
+
+Cont YTD x MES = {
+    ("Protocolos YTD"; NAMEOF('Base'[YTD cont]); 0);
+    ("Protocolos Mês"; NAMEOF('Base'[Contmes]); 1)
+}
+
+Grupos x Categoria = {
+    ("GRUPOS"; NAMEOF('Base'[GRUPO]); 0);
+    ("CATEGORIAS"; NAMEOF('Base'[CATEGORIA]); 1);
+    ("FAMILIAS"; NAMEOF('Base'[FAMILIA]); 2)
+}
+
+Lotes x Motivos X Naturezas = {
+    ("MOTIVOS"; NAMEOF('Base'[MOTIVO]); 0);
+    ("NATUREZAS"; NAMEOF('Base'[NATUREZA]); 1)
+}
+
+Marcas x Produtos = {
+    ("MARCA"; NAMEOF('Base'[MARCA]); 0);
+    ("PRODUTO"; NAMEOF('Base'[PRODUTO]); 1)
+}
+
+QTD YTD x Mes = {
+    ("QTD YTD"; NAMEOF('Base'[YTD QTD]); 0);
+    ("QTD Mês"; NAMEOF('Base'[QTDmes]); 1)
+}
+
+TBL_Calendario = CALENDAR(MIN(Base[DATA DO ATENDIMENTO]); MAX(Base[DATA DO ATENDIMENTO]))
+
+VAR Cont YTD x Mes = {
+    ("Variação cont YTD"; NAMEOF('Base'[Variação cont YTD]); 0);
+    ("Variação cont mes"; NAMEOF('Base'[Variação cont mes]); 1)
+}
+
+VAR QTD YTD x Mes = {
+    ("Variação QTD YTD"; NAMEOF('Base'[Variação QTD YTD]); 0);
+    ("Variação QTD mes"; NAMEOF('Base'[Variação QTD mes]); 1)
+}
+
+--------------------------------------------------------------------------------------------
+
+⚪ CRIANDO TABELA PARA SELEÇÃO DE MODELO DE ANÁLISE ANUAL X MENSAL
+
+PÁGINA INICIAL > DADOS > INSERIR DADOS
+
+COLUNA 1 = OPÇÃO (YTD, MES)
+COLUNA 2 = CAMPOS (0, 1)
+
+EXIBIÇÃO DE MODELO > GERENCIAR RELAÇÕES: SELEÇÃO (OPÇÃO) 🤝 PARAMETROS (SELEÇÃO)
+
+AGORA TODAS ÔS PARÂMETROS SÃO DEFINIDOS PELEA SELEÇÃO DESSA TABELA, E UM TOGGLE COM AS OPÇÕES YTD X MES, FILTRAM TODO O DASHBOARD, ALTERNANDO A ANÁLISE DE ANUAL PARA MENSAL CONFORME NECESSIDADE DO USUÁRIO FINAL.
