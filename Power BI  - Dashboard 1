@@ -36,13 +36,13 @@ Dados > Calendario > ... > Marcar como tabela de data
 
 ---------------------------------------------------------------------------------------------
 
-⚪ CRIANDO RELACIONOAMENTO ENTRE TABELAS
+⚪ CRIANDO RELAÇÃO ENTRE TABELAS
 
 Exibição do modelo > Gerenciar Relações > Novo... TBL_Calendario Date 🤝 BASE (Data do atendimento)
 
 CARDINALIDADE: Muitos para um (*:1)
 
-DIREÇÃO DO FILTRO CRUZADI: Único
+DIREÇÃO DO FILTRO CRUZADO: Único
 
 ---------------------------------------------------------------------------------------------
 
