@@ -1,0 +1,88 @@
+CREATE DATABASE  PRE_FATURADO;
+
+USE PRE_FATURADO;
+
+CREATE TABLE DIM_PJ (
+	PJ INT PRIMARY KEY);
+
+
+INSERT INTO DIM_PJ (PJ)  
+VALUES  
+    (1000);
+
+DECLARE @i INT = 2000;
+
+WHILE @i <= 300000
+BEGIN
+    INSERT INTO DIM_PJ (PJ) VALUES (@i);
+    SET @i = @i + 1000;
+END;
+
+
+--SELECT * FROM DIM_PJ
+
+CREATE TABLE vw_bb_faturamento(
+	PJ int,
+	SIGLA_INTEGRACAO int,
+	NUMERO_INTEGRACAO int,
+	ACAO varchar (50),
+	ORGAO_JULGADOR varchar (50),
+	JUIZO varchar (100),
+	JUIZO_ESTADO varchar (2),
+	DATA_LANCAMENTO	date,
+	EVENTO_SIGLA varchar (50),
+	EVENTO_DESCRICAO varchar (50),
+	UNIDADE_DESCRICAO varchar (50),
+	VALOR_ESTIMADO int,
+	TEMA varchar (50),
+	VALOR_CAUSA int,
+	SITUACAO_RESULTADO varchar (50),
+	DATA_RESULTADO date,
+	VALOR_RESULTADO int,
+	GRUPO_TRABALHO varchar (100));
+
+
+
+INSERT INTO vw_bb_faturamento values
+	(1000,11111,1,'A','A1','RIO DE JANEIRO - RJ','RJ','2024-10-04','E1','EVENTO 1','Unidade1','','Tema Principal','200','Em andamento','','','Grupo 1'),
+	(2000,11112,2,'B','A2','SAO PAULO - SP','SP','2024-09-02','E2','EVENTO 2','Unidade1','','Tema Principal','200','Em andamento','','','Grupo 2'),
+	(3000,11113,3,'C','A3','RIO DE JANEIRO - RJ','RJ','2024-09-03','E3','EVENTO 3','Unidade1','','Tema Principal','200','Em andamento','','','Grupo 3'),
+	(4000,11114,4,'D','A4','SAO PAULO - SP','SP','2024-09-04','E4','EVENTO 4','Unidade1','','Tema Principal','200','Em andamento','','','Grupo 4'); -- ETC... ATÉ PJ = 300000
+
+
+CREATE TABLE DIM_UF (
+	ESTADO VARCHAR (50),
+	SIGLA_UF VARCHAR (2),
+	CAPITAL VARCHAR (50),
+	REGIÃO VARCHAR (50),
+	ESTADO_2 VARCHAR (50));
+
+
+INSERT INTO DIM_UF (Estado, SIGLA_UF, CAPITAL, REGIÃO, ESTADO_2) VALUES
+    ('Acre', 'AC', 'Rio Branco', 'Norte', 'Acre'),
+    ('Alagoas', 'AL', 'Maceió', 'Nordeste', 'Alagoas'),
+    ('Amazonas', 'AM', 'Manaus', 'Norte', 'Amazonas'),
+    ('Amapá', 'AP', 'Macapá', 'Norte', 'Amapa'),
+    ('Bahia', 'BA', 'Salvador', 'Nordeste', 'Bahia'),
+    ('Ceará', 'CE', 'Fortaleza', 'Nordeste', 'Ceara'),
+    ('Distrito Federal', 'DF', 'Brasília', 'Centro-Oeste', 'Distrito Federal'),
+    ('Espírito Santo', 'ES', 'Vitória', 'Sudeste', 'Espirito Santo'),
+    ('Goiás', 'GO', 'Goiânia', 'Centro-Oeste', 'Goias'),
+    ('Maranhão', 'MA', 'São Luís', 'Nordeste', 'Maranhao'),
+    ('Minas Gerais', 'MG', 'Belo Horizonte', 'Sudeste', 'Minas Gerais'),
+    ('Mato Grosso do Sul', 'MS', 'Campo Grande', 'Centro-Oeste', 'Mato Grosso do Sul'),
+    ('Mato Grosso', 'MT', 'Cuiabá', 'Centro-Oeste', 'Mato Grosso'),
+    ('Pará', 'PA', 'Belém', 'Norte', 'Para'),
+    ('Paraíba', 'PB', 'João Pessoa', 'Nordeste', 'Paraiba'),
+    ('Pernambuco', 'PE', 'Recife', 'Nordeste', 'Pernambuco'),
+    ('Piauí', 'PI', 'Teresina', 'Nordeste', 'Piaui'),
+    ('Paraná', 'PR', 'Curitiba', 'Sul', 'Parana'),
+    ('Rio de Janeiro', 'RJ', 'Rio de Janeiro', 'Sudeste', 'Rio de Janeiro'),
+    ('Rio Grande do Norte', 'RN', 'Natal', 'Nordeste', 'Rio Grande do Norte'),
+    ('Rondônia', 'RO', 'Porto Velho', 'Norte', 'Rondonia'),
+    ('Roraima', 'RR', 'Boa Vista', 'Norte', 'Roraima'),
+    ('Rio Grande do Sul', 'RS', 'Porto Alegre', 'Sul', 'Rio Grande do Sul'),
+    ('Santa Catarina', 'SC', 'Florianópolis', 'Sul', 'Santa Catarina'),
+    ('Sergipe', 'SE', 'Aracaju', 'Nordeste', 'Sergipe'),
+    ('São Paulo', 'SP', 'São Paulo', 'Sudeste', 'Sao Paulo'),
+    ('Tocantins', 'TO', 'Palmas', 'Norte', 'Tocantins');
