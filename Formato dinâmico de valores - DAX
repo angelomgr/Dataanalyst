@@ -1,4 +1,4 @@
-VAR total = [Valor do total]
+VAR total = abs([Valor do total])
 
 RETURN 
 
