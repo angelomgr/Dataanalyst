@@ -1,0 +1,16 @@
+Pareto Percentage = 
+
+IF(
+    ISINSCOPE(vw_acordos[ADVOGADO ADVERSO]),
+    VAR __Allselectedadv = ALLSELECTED(vw_acordos[ADVOGADO ADVERSO])
+    VAR __ADVTABLE = ADDCOLUMNS(__Allselectedadv, "@Count", [PROCESSOS])
+    VAR __CURRENTCOUNT = [PROCESSOS]
+    VAR __CUMADVTABLE = FILTER(__ADVTABLE, [@Count] >= __CURRENTCOUNT)
+    VAR __CUMADV = SUMX(__CUMADVTABLE, [@Count])
+    VAR __AllselectedAdvCount = CALCULATE([PROCESSOS], __Allselectedadv)
+    VAR __result = DIVIDE(__CUMADV, __AllselectedAdvCount)
+
+
+
+    RETURN 
+__result)
