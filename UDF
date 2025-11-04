@@ -1,0 +1,70 @@
+//Setas positivas e negativas-----------------------------------------------------
+
+DEFINE
+/// Image.TrendArrowImage
+/// Summary: Generates a color-coded SVG arrow (up or down) for KPI trend visualization.
+/// Params:
+///   _trendDirection (STRING VAL): "up" or "down" - Direction of the arrow
+///   _trendMeaning (STRING VAL): "good" or "bad" - Business context for coloring
+/// Returns: STRING - SVG image URL for Power BI visuals
+/// Model Requirements: None, but output measure must have Data Category = Image URL
+FUNCTION Image.TrendArrowSVG = (
+    _trendDirection : STRING,
+    _trendMeaning : STRING
+) =>
+
+VAR _ColorHex =
+    SWITCH (
+        TRUE (),
+        _trendMeaning = "bad",  "#FF0000",  -- Red
+        _trendMeaning = "good", "#00FF00",  -- Green
+        "#E6E6E6"                           -- Neutral gray (default)
+    )
+
+VAR _ArrowUp =
+    "<svg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='" & _ColorHex & "'>" &
+    "<path d='m136-240-56-56 296-298 160 160 208-206H640v-80h240v240h-80v-104L536-320 376-480 136-240Z'/>" &
+    "</svg>"
+
+VAR _ArrowDown =
+    "<svg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='" & _ColorHex & "'>" &
+    "<path d='M640-240v-80h104L536-526 376-366 80-664l56-56 240 240 160-160 264 264v-104h80v240H640Z'/>" &
+    "</svg>"
+
+VAR _ArrowSVG =
+    SWITCH (
+        TRUE (),
+        _trendDirection = "up",   _ArrowUp,
+        _trendDirection = "down", _ArrowDown
+    )
+
+RETURN
+    "data:image/svg+xml;utf8," & _ArrowSVG
+
+
+// NPS ----------------------------------------------------
+
+DEFINE
+    /// Traz o NPS de uma coluna de acordo com o intervalo de notas (5 ou 10).
+    FUNCTION CALCULONPS = (
+    _max: INT64,
+    _coluna: anyref
+) =>
+VAR Total = COUNT(_coluna)
+VAR Promotores = 
+    SWITCH(_max,
+        10, CALCULATE(COUNT(_coluna), _coluna >= 9),
+        5,  CALCULATE(COUNT(_coluna), _coluna = 5),
+        BLANK()
+    )
+VAR Detratores = 
+    SWITCH(_max,
+        10, CALCULATE(COUNT(_coluna), _coluna <= 6),
+        5,  CALCULATE(COUNT(_coluna), _coluna <= 3), 
+        BLANK()
+    )
+RETURN
+    IF(Total > 0,
+        DIVIDE(Promotores - Detratores, Total),
+        BLANK()
+    )
