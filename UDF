@@ -90,3 +90,26 @@ SWITCH(
     total < 1000000000000000000, FORMAT(total, "#,,,,,.0Quad"),
     FORMAT(total, "#,,,,,,.0Quin")  // Default para >= 1 quintilhão
 )
+
+🟢 REAL FORMATADO ----------------------------------------------------
+
+define
+/// Formatar qtds em string com abreviação (k, mi, bi etc).
+    function REALFORMATADO = (
+    _valor: int64
+) =>
+
+VAR total = abs(_valor)
+
+RETURN
+
+SWITCH(
+    TRUE(),
+    total < 1000, FORMAT(total, "R$0"),
+    total < 1000000, FORMAT(total, "R$#,.0K"),
+    total < 1000000000, FORMAT(total, "R$#,,.0Mi"),
+    total < 1000000000000, FORMAT(total, "R$#,,,.0Bi"),
+    total < 1000000000000000, FORMAT(total, "R$#,,,,.0Tri"),
+    total < 1000000000000000000, FORMAT(total, "R$#,,,,,.0Quad"),
+    FORMAT(total, "R$#,,,,,,.0Quin")  // Default para >= 1 quintilhão
+)
