@@ -1,4 +1,4 @@
-//Setas positivas e negativas-----------------------------------------------------
+🟢 Setas positivas e negativas-----------------------------------------------------
 
 DEFINE
 /// Image.TrendArrowImage
@@ -42,7 +42,7 @@ RETURN
     "data:image/svg+xml;utf8," & _ArrowSVG
 
 
-// NPS ----------------------------------------------------
+🟢 NPS ----------------------------------------------------
 
 DEFINE
     /// Traz o NPS de uma coluna de acordo com o intervalo de notas (5 ou 10).
@@ -68,3 +68,25 @@ RETURN
         DIVIDE(Promotores - Detratores, Total),
         BLANK()
     )
+
+🟢 QUANTIDADE FORMATADA ----------------------------------------------------
+define
+/// Formatar qtds em string com abreviação (k, mi, bi etc).
+    function QTDFORMATADA = (
+    _valor: int64
+) =>
+
+VAR total = abs(_valor)
+
+RETURN
+
+SWITCH(
+    TRUE(),
+    total < 1000, FORMAT(total, "0"),
+    total < 1000000, FORMAT(total, "#,.0K"),
+    total < 1000000000, FORMAT(total, "#,,.0Mi"),
+    total < 1000000000000, FORMAT(total, "#,,,.0Bi"),
+    total < 1000000000000000, FORMAT(total, "#,,,,.0Tri"),
+    total < 1000000000000000000, FORMAT(total, "#,,,,,.0Quad"),
+    FORMAT(total, "#,,,,,,.0Quin")  // Default para >= 1 quintilhão
+)
