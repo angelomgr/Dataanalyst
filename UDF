@@ -113,3 +113,40 @@ SWITCH(
     total < 1000000000000000000, FORMAT(total, "R$#,,,,,.0Quad"),
     FORMAT(total, "R$#,,,,,,.0Quin")  // Default para >= 1 quintilhão
 )
+
+🟢 VARIAÇÃO PERCENTUAL INDICADOR  ----------------------------------------------------
+
+define FUNCTION VARIACAOINDICADOR =
+( /// variação com indicador positivo / negativo.
+    medida: double
+) =>
+
+var valor = FORMAT(ABS(medida), "0%")
+
+var arrow =
+SWITCH(
+    TRUE(),
+    medida = 0, "-", 
+medida > 0 , UNICHAR(9650), 
+medida < 0 , UNICHAR(9660) 
+)
+
+RETURN arrow & valor
+
+🟢 VARIAÇÃO PERCENTUAL COR ----------------------------------------------------
+
+define FUNCTION VARIACAOCOR =
+( /// variação com indicador positivo / negativo.
+    medida: double
+) =>
+
+var color =
+SWITCH(
+    TRUE(),
+    medida = 0.0, "black", 
+	medida > 0.0 , "green", 
+	medida < 0.0 , "red" 
+)
+
+RETURN color
+
